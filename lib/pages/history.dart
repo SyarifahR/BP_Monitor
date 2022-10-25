@@ -1,12 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:test_bt/pages/home.dart';
-import 'package:test_bt/pages/reading.dart';
-import 'package:test_bt/pages/route_generator.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:intl/intl.dart';
-import 'dart:async';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:intl/intl.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -21,40 +13,12 @@ class History extends StatefulWidget {
 
 class _HistoryState extends State<History> {
   int timestamp = DateTime.now().millisecondsSinceEpoch;
-  List<Map<String,dynamic>> month_list = [];
+  // List<Map<String,dynamic>> month_list = [];
   List<Map<String,dynamic>> Current_ItemList = [];
   late Box itemlist;
+  late Box monthSelected;
   _HistoryState(this.itemlist);
-
-  final List<String> items = [
-    'JANUARY',
-    'FEBRUARY',
-    'MARCH',
-    'APRIL',
-    'MAY',
-    'JUNE',
-    'JULY',
-    'AUGUST',
-    'SEPTEMBER',
-    'OCTOBER',
-    'NOVEMBER',
-    'DICEMBER',
-  ];
-  String? selectedValue;
-  String? m;
-
-  late String  jan = items[0];
-  late String  feb = items[1];
-  late String  mar = items[2];
-  late String  apr = items[3];
-  late String  may = items[4];
-  late String  jun = items[5];
-  late String  jul = items[6];
-  late String  aug = items[7];
-  late String  sep = items[8];
-  late String  oct = items[9];
-  late String  nov = items[10];
-  late String  dec = items[11];
+  bool sort = false;
 
   @override
   initState() {
@@ -62,237 +26,86 @@ class _HistoryState extends State<History> {
     refresh_itemlist(itemlist);
   }
 
-  List<Map<String,dynamic>> janlist = [
-    {
-      'no': 1,
-      'date': '16/01/2022',
-      'time' : 12.59,
-      'sys': 65,
-      'dia': 43,
-      'mean': 77,
-      'pr': 36,
-    },
-    {
-      'no': 1,
-      'date': '16/01/2022',
-      'time' : 12.59,
-      'sys': 65,
-      'dia': 43,
-      'mean': 77,
-      'pr': 36,
-    },
-  ];
-
-  List<Map<String,dynamic>> feblist = [
-    {
-      'no': 2,
-      'date': '22/02/2222',
-      'time' : 15.22,
-      'sys': 22,
-      'dia': 22,
-      'mean': 22,
-      'pr': 22,
-    },
-    {
-      'no': 2,
-      'date': '22/02/2222',
-      'time' : 15.22,
-      'sys': 22,
-      'dia': 22,
-      'mean': 22,
-      'pr': 22,
-    },
-  ];
-
-  int counter = 1;
-
-
   refresh_itemlist(Box<dynamic> itemlist){
     final final_itemlist = itemlist.keys.map((key) {
       final value = itemlist.get(key);
       // return {"key": key, "no": value['no'], "date": value['date'], "time": value['time'], "sys": value["sys"], "dia": value['dia'], "mean": value['mean'], "pr": value['pr']};
       return {"key": key, "date": value['date'], "time": value['time'], "sys": value["sys"], "dia": value['dia'], "mean": value['mean'], "pr": value['pr']};
     }).toList();
-    setState(() {
-      Current_ItemList = final_itemlist.toList();
-      // items = data_bp.reversed.toList();
-    });
+    if (sort == false){
+      setState(() {
+        // Current_ItemList = final_itemlist.toList();
+        Current_ItemList = final_itemlist.reversed.toList();
+      });
+    }else if (sort == true){
+      setState(() {
+        Current_ItemList = final_itemlist.toList();
+        // Current_ItemList = final_itemlist.reversed.toList();
+      });
+    }
   }
-
-  List<Map<String, dynamic>> selectedMonth (String month){
-
-    if (month == jan){
-      m = month as String;
-      month_list = janlist;
-      month_list = month_list + janlist;
-    }
-    else if (month == feb){
-      m = month as String ;
-      month_list = feblist;
-      month_list = month_list + feblist;
-    }
-    else if (month == mar){
-      m = month as String;
-    }
-    else if (month == apr){
-      m = month as String;
-    }
-    else if (month == may){
-      m = month as String;
-    }
-    else if (month == jun){
-      m = month as String;
-    }
-    else if (month == jul){
-      m = month as String;
-    }
-    else if (month == aug){
-      m = month as String;
-    }
-    else if (month == sep){
-      m = month as String;
-    }
-    else if (month == oct){
-      m = month as String;
-    }
-    else if (month == nov){
-      m = month as String;
-    }
-    else if (month == dec){
-      m = month as String;
-    }
-
-    return month_list;
-    // return m.toString();
-  }
-
 
   @override
   Widget build(BuildContext context) {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    String date = DateFormat('MMM').format(tsdate);//month in words
-    int last_index = itemlist.length - 1;
 
     return Scaffold(
-      backgroundColor: Colors.lightBlue[200],
+      backgroundColor: Colors.blueGrey[100],
       appBar: AppBar(
         toolbarHeight: 60,
         title: Text('HISTORY',style: TextStyle(color: Colors.white,letterSpacing:1.0,fontWeight: FontWeight.bold,fontSize: 20.0)),
         centerTitle: true,
-        leading: Transform.scale(
-          scale: 1.1,
-          child: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white,),
-            onPressed: (){
-              Navigator.of(context).pushNamed('/reading', arguments: itemlist);
-              // itemlist.deleteAt(last_index);+
-            },
-          ),
-        ),
-        leadingWidth: 80,
         backgroundColor: Colors.blue[800],
         elevation: 30.0,
       ),
-      body: Padding(padding: EdgeInsets.fromLTRB(40.0, 50.0, 40.0, 0.0),
+      body: Padding(padding: EdgeInsets.fromLTRB(40.0, 10.0, 40.0, 20.0),
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            // crossAxisAlignment: CrossAxisAlignment.stretch,
-            // mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text(
-                          'MONTH : ',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.0,
+                        !sort?
+                        IconButton(
+                          icon: const Icon(
+                            Icons.undo_rounded,
+                            color: Colors.white,
                           ),
-                        ),
-                        SizedBox(width: 30.0),
-                        DropdownButtonHideUnderline(
-                            child: DropdownButton2(
-                              isExpanded: true,
-                              hint: Row(
-                                children: const[
-                                  Expanded(
-                                    child: Text(
-                                      'Select Month',
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black54),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              items: items.map((item)=> DropdownMenuItem<String>(
-                                value: item,
-                                child: Text(
-                                    item,
-                                    style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black),
-                                    overflow: TextOverflow.ellipsis
-                                ),
-                              )).toList(),
-                              value: selectedValue,
-                              onChanged: (value){
-                                setState(() {
-                                  selectedValue = value as String;
-                                });
-                                selectedMonth(selectedValue.toString());
-                              },
-
-                              icon: const Icon(Icons.arrow_forward_ios_outlined),
-                              iconSize: 14,
-                              iconEnabledColor: Colors.black54,
-                              iconDisabledColor: Colors.red,
-                              buttonHeight: 30,
-                              buttonWidth: 140,
-                              buttonPadding: const EdgeInsets.only(left: 14, right: 14),
-                              buttonDecoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4),
-                                  border: Border.all(color: Colors.black26,),
-                                  color: Colors.white70),
-                              buttonElevation: 10,
-                              itemHeight: 40,
-                              itemPadding: const EdgeInsets.only(left: 14, right: 14),
-                              dropdownMaxHeight: 200,
-                              dropdownWidth: 150,
-                              dropdownPadding: null,
-                              dropdownDecoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: Colors.white60),
-                              dropdownElevation: 1,
-                              scrollbarRadius: const Radius.circular(40),
-                              scrollbarThickness: 6,
-                              scrollbarAlwaysShow: true,
-                              offset: const Offset(0, 0),
-                            )
+                          onPressed: () {
+                            setState(() {
+                              sort = true;
+                              refresh_itemlist(itemlist);
+                            });
+                          },
+                        )
+                        :IconButton(
+                          icon: const Icon(
+                            Icons.redo_rounded,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              sort = false;
+                              refresh_itemlist(itemlist);
+                            });
+                          },
                         ),
                       ]
                   ),
                 ],
               ),
-              SizedBox(height: 40.0),
+              SizedBox(height: 10.0),
               Center(
                 child: Text(
                   'NIBP RECORDS\t',
-                  // 'NIBP RECORDS\t'+ m.toString(),
                   style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
                 ),
               ),
-              SizedBox(height: 30.0),
-
+              SizedBox(height: 20.0),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -300,7 +113,7 @@ class _HistoryState extends State<History> {
                   Center(
                     child:
                     Container(
-                      height: 380,
+                      height: 350,
                       padding: const EdgeInsets.all(10),
                       color: Colors.blueGrey[50],
                       margin: EdgeInsets.fromLTRB(0, 0, 0, 20.0),
@@ -331,11 +144,11 @@ class _HistoryState extends State<History> {
                                 cells: [
                                   // DataCell(Container(width:25,child:Text(e['no'].toString(),style: TextStyle(fontSize: 12),textAlign: TextAlign.center))),
                                   DataCell(Container(width:70,child:Text(e['date'].toString(),style: TextStyle(fontSize: 12)))),
-                                  DataCell(Container(width:40,child:Text(e['time'].toString(),style: TextStyle(fontSize: 12),textAlign: TextAlign.center))),
-                                  DataCell(Container(width:70,child:Text(e['sys'].toString(),style: TextStyle(fontSize: 12),textAlign: TextAlign.center))),
-                                  DataCell(Container(width:70,child:Text(e['dia'].toString(),style: TextStyle(fontSize: 12),textAlign: TextAlign.center))),
+                                  DataCell(Container(width:70,child:Text(e['time'].toString(),style: TextStyle(fontSize: 12),textAlign: TextAlign.center))),
+                                  DataCell(Container(width:80,child:Text(e['sys'].toString(),style: TextStyle(fontSize: 12),textAlign: TextAlign.center))),
+                                  DataCell(Container(width:80,child:Text(e['dia'].toString(),style: TextStyle(fontSize: 12),textAlign: TextAlign.center))),
                                   DataCell(Container(width:70,child:Text(e['mean'].toString(),style: TextStyle(fontSize: 12),textAlign: TextAlign.center))),
-                                  DataCell(Container(width:70,child:Text(e['pr'].toString(),style: TextStyle(fontSize: 12),textAlign: TextAlign.center))),
+                                  DataCell(Container(width:80,child:Text(e['pr'].toString(),style: TextStyle(fontSize: 12),textAlign: TextAlign.center))),
                                 ],
                               ),).toList(),
                             ),

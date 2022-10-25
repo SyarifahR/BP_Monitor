@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:test_bt/pages/home.dart';
-import 'package:test_bt/pages/reading.dart';
 import 'package:test_bt/pages/history.dart';
 import 'package:hive/hive.dart';
 
@@ -11,8 +10,6 @@ class RouteGenerator {
     switch (settings.name){
       case '/home':
         return MaterialPageRoute(builder: (context) => Home());
-      case '/reading':
-        return MaterialPageRoute(builder: (context) => Reading(displaylist: args as Box<dynamic>));
       case '/history':
         return MaterialPageRoute(builder: (context) => History(itemlist: args as Box<dynamic>));
       default:
